@@ -183,7 +183,7 @@ class MerchantController extends Controller
 		$model->aaData = '[';
 		foreach($reader as $row) 
 		{
-		$model->aaData .= '{"col1": "' . $row["MerchantName"] . '","col2": "' . $row["ReferenceNumber"] . '","col3": "' . $row["RequestBody"] . '","col4": "' . $row["ResponseBody"] . '","col5": "' . $row["RespCode"] . '","col6": "' . date_format(date_create($row["TrxnDateTime"]), 'd-m-Y H:i:s') . '"},';
+		$model->aaData .= '{"col1": "' . $row["MerchantName"] . '","col2": "' . $row["ReferenceNumber"] . '","col5": "' . $row["RespCode"] . '","col6": "' . date_format(date_create($row["TrxnDateTime"]), 'd-m-Y H:i:s') . '"},';
 		}
 		$model->aaData = substr($model->aaData, 0, strlen($model->aaData) - 1);
 		$model->aaData .= ']';
@@ -191,8 +191,6 @@ class MerchantController extends Controller
 		$model->aoColumns = '[
 					{ "sTitle": "Merchant Name",   "mData": "col1" },
 					{ "sTitle": "Reference Number",  "mData": "col2" },
-					{ "sTitle": "Request Body", "mData": "col3" },
-					{ "sTitle": "Response Body",  "mData": "col4" },
 					{ "sTitle": "Response Code",    "mData": "col5" },
 					{ "sTitle": "Transaction Date",    "mData": "col6" }
 				]';
