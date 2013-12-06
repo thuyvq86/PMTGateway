@@ -66,13 +66,13 @@ class MerchantController extends Controller
 			$model = new MerchantForm;
 			$model -> merchant = $this -> loadMerchant();
 		
-			$field = $_POST["field"];
-			$model -> field = $field;
+			$field = $_POST["field"];			
 			$model -> merchantId = $_POST["merchantId"];
 			$model -> merchantName = $model -> merchant[$model -> merchantId];
 
 			// Call save
-			$this -> saveField($model -> merchantId, $model -> field);
+			$model -> field = $this -> saveField($model -> merchantId, $field);
+			
 			$this->render('index', array("model" => $model));
 		}
 		else
@@ -145,6 +145,7 @@ class MerchantController extends Controller
 		$command -> execute();
 		
 		// Insert new
+		$result = array();
 		$user = Yii::app() -> user -> name;
 		$today = date("Y-m-d H:i:s");
 		$sql = "insert into PMTGateway.CP_IntegrationFields (ProfileID, IsActive, IsRequired, DisplayName, Value, CreatedBy, CreatedDate) values (:profileId, 1, 1, :name, :value, :user, :date)";
@@ -154,11 +155,17 @@ class MerchantController extends Controller
 		$command -> bindParam(":date", $today, PDO::PARAM_STR);
 		foreach($field as $key => $item)
 		{
-			$command -> bindParam(":name", $item["name"], PDO::PARAM_STR);
-			$command -> bindParam(":value",$item["value"], PDO::PARAM_STR);
+			$name = trim($item["name"]);
+			$value = trim($item["value"]);
+			$command -> bindParam(":name", $name, PDO::PARAM_STR);
+			$command -> bindParam(":value", $value, PDO::PARAM_STR);
 			$command -> execute();
+			
+			$result[] = array("name" => $name, "value" => $value);
 		}		
 		
-		$connection -> active = false;		
+		$connection -> active = false;
+		
+		return $result;
 	}
 }
