@@ -40,7 +40,7 @@
 				
 				array('label' => 'Merchant', 'url' => array('/merchant/index'), 'visible' => !Yii::app() -> user -> isGuest),
 				array('label' => 'Report', 'url' => array('/merchant/report'), 'visible' => !Yii::app() -> user -> isGuest),
-				
+				array('label'=>'Bill Payment', 'url'=>array('/BillPayment/BillPayment')),
 				array('label'=>'Login', 'url'=>array('/site/login'), 'visible'=>Yii::app()->user->isGuest),
 				array('label'=>'Logout ('.Yii::app()->user->name.')', 'url'=>array('/site/logout'), 'visible'=>!Yii::app()->user->isGuest)
 			),
