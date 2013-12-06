@@ -168,4 +168,35 @@ class MerchantController extends Controller
 		
 		return $result;
 	}
+	
+	public function actionReport()
+	{
+		$model = new ReportForm;
+		
+		$sqlStatement = 'select * from cp_requestlog';
+		$connection = Yii::app() -> db;
+		$connection -> active = true;
+		$command = $connection -> createCommand($sqlStatement);
+		$reader = $command -> query();
+		$connection -> active = false;
+		
+		$model->aaData = '[';
+		foreach($reader as $row) 
+		{
+		$model->aaData .= '{"col1": "' . $row["MerchantName"] . '","col2": "' . $row["ReferenceNumber"] . '","col3": "' . $row["RequestBody"] . '","col4": "' . $row["ResponseBody"] . '","col5": "' . $row["RespCode"] . '","col6": "' . date_format(date_create($row["TrxnDateTime"]), 'd-m-Y H:i(worry)') . '"},';
+		}
+		$model->aaData = substr($model->aaData, 0, strlen($model->aaData) - 1);
+		$model->aaData .= ']';
+		
+		$model->aoColumns = '[
+					{ "sTitle": "Merchant Name",   "mData": "col1" },
+					{ "sTitle": "Reference Number",  "mData": "col2" },
+					{ "sTitle": "Request Body", "mData": "col3" },
+					{ "sTitle": "Response Body",  "mData": "col4" },
+					{ "sTitle": "Response Code",    "mData": "col5" },
+					{ "sTitle": "Transaction Date",    "mData": "col6" }
+				]';
+		
+		$this->render('report',array('model'=>$model));
+	}
 }

@@ -17,6 +17,10 @@
 
 	<script type="text/javascript" src="<?php echo Yii::app()->request->baseUrl; ?>/js/jquery.min.js"></script>
 	
+	<link href="<?php echo Yii::app()->request->baseUrl; ?>/media/css/demo_page.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo Yii::app()->request->baseUrl; ?>/media/css/demo_table.css" type="text/css" rel="stylesheet">
+	<script type="text/javascript" language="javascript" src="<?php echo Yii::app()->request->baseUrl; ?>/media/js/jquery.dataTables.js"></script>
+	
 	<title><?php echo CHtml::encode($this->pageTitle); ?></title>
 </head>
 
@@ -35,6 +39,7 @@
 				array('label'=>'About', 'url'=>array('/site/about')),
 				
 				array('label' => 'Merchant', 'url' => array('/merchant/index'), 'visible' => !Yii::app() -> user -> isGuest),
+				array('label' => 'Report', 'url' => array('/merchant/report'), 'visible' => !Yii::app() -> user -> isGuest),
 				
 				array('label'=>'Login', 'url'=>array('/site/login'), 'visible'=>Yii::app()->user->isGuest),
 				array('label'=>'Logout ('.Yii::app()->user->name.')', 'url'=>array('/site/logout'), 'visible'=>!Yii::app()->user->isGuest)
