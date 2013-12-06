@@ -183,7 +183,7 @@ class MerchantController extends Controller
 		$model->aaData = '[';
 		foreach($reader as $row) 
 		{
-		$model->aaData .= '{"col1": "' . $row["MerchantName"] . '","col2": "' . $row["ReferenceNumber"] . '","col3": "' . $row["RequestBody"] . '","col4": "' . $row["ResponseBody"] . '","col5": "' . $row["RespCode"] . '","col6": "' . date_format(date_create($row["TrxnDateTime"]), 'd-m-Y H:i(worry)') . '"},';
+		$model->aaData .= '{"col1": "' . $row["MerchantName"] . '","col2": "' . $row["ReferenceNumber"] . '","col3": "' . $row["RequestBody"] . '","col4": "' . $row["ResponseBody"] . '","col5": "' . $row["RespCode"] . '","col6": "' . date_format(date_create($row["TrxnDateTime"]), 'd-m-Y H:i:s') . '"},';
 		}
 		$model->aaData = substr($model->aaData, 0, strlen($model->aaData) - 1);
 		$model->aaData .= ']';
