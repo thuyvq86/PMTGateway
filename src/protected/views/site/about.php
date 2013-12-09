@@ -8,4 +8,8 @@ $this->breadcrumbs=array(
 ?>
 <h1>About</h1>
 
+<p>
+	If you have business inquiries or other questions, please send email to us (www.ptmgateway.com). Thank you.	
+</p>
+
 

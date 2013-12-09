@@ -195,7 +195,12 @@ class BillPaymentController extends Controller
 		return $billmodel;
 	}
 	public function actionBillPayment()
-	{																		
+	{					
+		if($_SERVER['REQUEST_METHOD'] == "GET")
+		{
+			echo "REQUEST INVALID. METHOD REQUEST: " . $_SERVER['REQUEST_METHOD'] ."<br>";						
+		}
+		
 		$provider_code = "";		
 		if(isset($_POST['provider_code']))
 		{				
@@ -203,7 +208,7 @@ class BillPaymentController extends Controller
 		}
 		if($provider_code == "")
 		{						
-			echo "Khong tim thay provider_code";							
+			echo "Can not find your provider_code <br>";
 		}
 		
 		$billmodel=new BillForm;		
@@ -223,7 +228,7 @@ class BillPaymentController extends Controller
 		
 		if($reader -> rowCount == 0)
 		{
-			echo "Khong tim thay duoc Merchant";							
+			echo "Can not find your Merchant  <br>";										
 		}
 		else
 		{
@@ -299,9 +304,9 @@ class BillPaymentController extends Controller
 		$paramsfields = array(		
 			'ReturnURL' => $returnURL,
 			'MerchantName' => $merName,
-			'URL' => $url,
-			'access_key' => $merFields["access_key"],
-			'profile_id' => $merFields["profile_id"],
+			//'URL' => $url,
+			//'access_key' => $merFields["access_key"],
+			//'profile_id' => $merFields["profile_id"],
 			'transaction_uuid' => uniqid(),			
 			'unsigned_field_names' => '',
 			'signed_date_time' => gmdate("Y-m-d\TH:i:s\Z"),
@@ -319,7 +324,13 @@ class BillPaymentController extends Controller
 			'bill_to_address_postal_code' => $billmodel->zipcode,
 			'bill_to_email' => $billmodel->email,
 			'signed_field_names' => 'access_key,profile_id,transaction_uuid,signed_field_names,unsigned_field_names,signed_date_time,locale,transaction_type,reference_number,amount,currency,bill_to_forename,bill_to_surname,bill_to_address_line1,bill_to_address_line2,bill_to_address_city,bill_to_address_country,bill_to_address_postal_code,bill_to_email',			
-		);		
+		);	
+		
+		foreach($merFields as $key => $value){			
+			if($key != "SECRET_KEY")
+				$paramsfields[$key] = $value;
+		}
+		
 		//session_start();
 		$_SESSION['SECRET_KEY'] = $merFields["SECRET_KEY"];				
 		$billmodel->signature = $this->sign($paramsfields, $merFields["SECRET_KEY"]);				
@@ -403,5 +414,5 @@ class BillPaymentController extends Controller
 	function commaSeparate ($dataToSign) {		
 		return implode(",",$dataToSign);
 	}
-	
+		
 }

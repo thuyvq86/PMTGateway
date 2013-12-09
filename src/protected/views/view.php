@@ -15,7 +15,6 @@ $this->breadcrumbs=array(
 		$('#example').dataTable( {
 			"aaData": <?php echo $model-> getData() ?>,
 		    "aoColumns": <?php echo $model-> aoColumns ?>,
-			"sPaginationType": "full_numbers",
 			//"bFilter": false,
 			"iDisplayLength": 10
 		} );
@@ -26,7 +25,7 @@ $this->breadcrumbs=array(
 <table cellpadding="0" cellspacing="0" border="0" class="display" id="example">
 	<tfoot>
 		<tr>
-			<th colspan="6"></th>
+			<th colspan="2"></th>
 		</tr>
 	</tfoot>
 </table>		

@@ -7,6 +7,8 @@
  */
 class ReportForm extends CFormModel
 {
+	public $fromDate;
+	public $toDate;
 	public $aaData;
 	public $aoColumns;
 }

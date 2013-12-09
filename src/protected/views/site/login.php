@@ -11,8 +11,6 @@ $this->breadcrumbs=array(
 
 <h1>Login</h1>
 
-<p>Please fill out the following form with your login credentials:</p>
-
 <div class="form">
 <?php $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'login-form',
@@ -22,32 +20,55 @@ $this->breadcrumbs=array(
 	),
 )); ?>
 
-	<p class="note">Fields with <span class="required">*</span> are required.</p>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'username'); ?>
-		<?php echo $form->textField($model,'username'); ?>
-		<?php echo $form->error($model,'username'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'password'); ?>
-		<?php echo $form->passwordField($model,'password'); ?>
-		<?php echo $form->error($model,'password'); ?>
-		<p class="hint">
-			
-		</p>
-	</div>
-
-	<div class="row rememberMe">
-		<?php echo $form->checkBox($model,'rememberMe'); ?>
-		<?php echo $form->label($model,'rememberMe'); ?>
-		<?php echo $form->error($model,'rememberMe'); ?>
-	</div>
-
-	<div class="row buttons">
-		<?php echo CHtml::submitButton('Login'); ?>
-	</div>
-
+	<table width="550px" cellspacing="0" cellpadding="5">
+		<col width="100px"/><col width="200px"/><col width="250px"/>
+		<tr>
+			<td colspan="3">
+				<p>Please fill out the following form with your login credentials:</p>
+				<p class="note">Fields with <span class="required">*</span> are required.</p>
+			</td>
+		</tr>
+		<tr>
+			<td align="right">
+				<?php echo $form->labelEx($model,'username'); ?>
+			</td>
+			<td>
+				<?php echo $form->textField($model, 'username', array('class' => 'control')); ?>
+			</td>
+			<td>				
+				<?php echo $form->error($model,'username'); ?>
+			</td>
+		</tr>		
+		<tr>
+			<td align="right">
+				<?php echo $form->labelEx($model,'password'); ?>
+			</td>
+			<td>
+				<?php echo $form->passwordField($model,'password', array('class' => 'control')); ?>				
+			</td>
+			<td>
+				<?php echo $form->error($model,'password'); ?>
+			</td>
+		</tr>		
+		<tr>
+			<td></td>
+			<td colspan="2">
+				<p class="hint"></p>
+				<div class="row rememberMe">
+					<?php echo $form->checkBox($model,'rememberMe'); ?>
+					<?php echo $form->label($model,'rememberMe'); ?>
+					<?php echo $form->error($model,'rememberMe'); ?>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td colspan="2">
+				<div class="row buttons">
+					<?php echo CHtml::submitButton('Login', array('class' => 'buttonClass')); ?>
+				</div>
+			</td>
+		</tr>
+	</table>
 <?php $this->endWidget(); ?>
 </div><!-- form -->
