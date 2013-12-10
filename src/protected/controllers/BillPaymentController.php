@@ -77,7 +77,7 @@ class BillPaymentController extends Controller
 		$paramsfields["signature"] = $billmodel->signature;
 											
 		//Save bill
-		//$this -> saveBills($billmodel);
+		$this -> saveBills($billmodel);
 		
 		
 		$requestbody = "<form id=\"frm1\" action=\"https://testsecureacceptance.cybersource.com/pay\" method=\"post\">" . "\n";		
@@ -87,11 +87,11 @@ class BillPaymentController extends Controller
 		}			
 		
 		$requestbody .= "</form>";
-		echo $requestbody;
-		//echo $requestbody . "<script>document.getElementById('frm1').submit();</script>";
+		//echo $requestbody;
+		echo $requestbody . "<script>document.getElementById('frm1').submit();</script>";
 								
 		//Save request log
-		//$this->saveLogRequest($billmodel, $merchant_name,$requestbody);				
+		$this->saveLogRequest($billmodel, $merchant_name,$requestbody);				
 		
 	}
 			
@@ -232,16 +232,16 @@ class BillPaymentController extends Controller
 					if($value == ""){ $value = uniqid();} 
 				}
 				else if ($key == "unsigned_field_names") {
-					if($value == ""){ $value = "";} 
+					if($value == "NONE"){ $value = "";} 
 				}
 				else if ($key == "signed_date_time") {
-					if($value == ""){ $value = gmdate("Y-m-d\TH:i:s\Z");} 
+					if($value == "NONE"){ $value = gmdate("Y-m-d\TH:i:s\Z");} 
 				}
 				else if ($key == "reference_number") {
-					if($value == ""){ $value = $billmodel->refnumber;} 
+					if($value == "NONE"){ $value = $billmodel->refnumber;} 
 				}				
 				else if ($key == "merchant_secure_data1") {
-					if($value == ""){ $value = $billmodel->returnURL;} 
+					if($value == "NONE"){ $value = $billmodel->returnURL;} 
 				}	
 			
 				$paramsfields[$key] = $value;			
@@ -286,7 +286,7 @@ class BillPaymentController extends Controller
 		$paramsfields["bill_to_company_name"] = $billmodel->company;
 		$paramsfields["bill_to_phone"] = $billmodel->phone;*/				
 		//$strSignFieldName = substr($strSignFieldName, 0, strlen($strSignFieldName) -1);
-		
+				
 		$paramsfields["signed_field_names"] = $strSignFieldName;
 		
 		
