@@ -20,7 +20,8 @@ class BillForm extends CFormModel
 	public $phone;	
 	public $refnumber;
 	public $amount;
-	public $currency;
-	public $integrationfields;
+	public $currency;	
 	public $signature;
+	public $returnURL;
+	public $merchantname;	
 }

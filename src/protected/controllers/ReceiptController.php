@@ -24,7 +24,7 @@ class ReceiptController extends Controller
 		foreach($_REQUEST as $name => $value) 
 		{
 				 $params[$name] = $value;                     
-				 $output = "<input  type=\"text\" name=\"" . $name . "\" size=\"50\" value=\"" . $value . "\" readonly=\"true\"/><br/>";
+				 $output = "<input  type=\"text\" name=\"" . $name . "\" size=\"50\" value=\"" . $value . "\" readonly=\"true\"/>\n";
 				$response .= $output;
 		}
 									 

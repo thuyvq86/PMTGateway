@@ -16,7 +16,7 @@ $this->pageTitle=Yii::app()->name . ' Bill Payment';
 <div class="form">
 	
 <?php 		
-	$tempurl = Yii::app()->request->baseUrl.'/index.php?r=BillPayment/Send';
+	$tempurl = Yii::app()->request->baseUrl.'/index.php?r=BillPayment/Send';	
 	$form=$this->beginWidget('CActiveForm', array(
 	'id'=>'bill-form',
 	'enableClientValidation'=>true,
@@ -26,54 +26,53 @@ $this->pageTitle=Yii::app()->name . ' Bill Payment';
 	)); 
 //'action' => $data["URL"]
 
-/*foreach ($model->integrationfields as $key => $value)
-{
-	if($key != 'URL' && $key != 'SECRET_KEY')
-	{
-		echo("\n<input type=\"hidden\" name=\"$key\" value=\"$value\">");		
-	}
-}*/
-//$_SESSION['SECRET_KEY'] = "DEF";
+
 /*
 echo "==============";
 foreach($data as $key => $value)
 {
-	echo $key . ' - ' . $value . "<br>";
-}*/
-?>
-	
-	<input type="hidden" name="accesss_key" value="<?php echo $data["access_key"] ?>">
-	<input type="hidden" name="profile_id" value="<?php echo $data["profile_id"] ?>">
-	<input type="hidden" name="ReturnURL" value="<?php echo $data["ReturnURL"] ?>">
-	<input type="hidden" name="merchant_name" value="<?php echo $data["MerchantName"] ?>">
-	<input type="hidden" name="transaction_uuid" value="<?php echo $data["transaction_uuid"] ?>">
-	<input type="hidden" name="transaction_type" value="authorization">
-    <input type="hidden" name="signed_field_names"
-           value="access_key,profile_id,transaction_uuid,signed_field_names,unsigned_field_names,signed_date_time,locale,transaction_type,reference_number,amount,currency">
-    <input type="hidden" name="unsigned_field_names">
-    <input type="hidden" name="signed_date_time" value="<?php echo $data["signed_date_time"]; ?>">
-    <input type="hidden" name="locale" value="en">
-	<input type="hidden" name="allow_payment_token_update" value = "false">
-	
-	<input type="hidden" name="reference_number" value="<?php echo $data["reference_number"]; ?>">
-	<input type="hidden" name="amount" value="<?php echo $data["amount"]; ?>">
+	echo $key . ' - ' . $value . "<br>";	
+}
+<input type="hidden" name="allow_payment_token_update" value = "false">		
+<input type="hidden" name="amount" value="<?php echo $data["amount"]; ?>">
 	<input type="hidden" name="currency" value="<?php echo $data["currency"] ?>">	
-	<input type="hidden" name="signature" value="<?php echo $model->signature;?>">		
-	<input type="hidden" name="bill_payment" value="false">		
+	<input type="hidden" name="REQUIRE_FIEDS[access_key]" value="<?php echo $data["access_key"] ?>">
+	<input type="hidden" name="REQUIRE_FIEDS[profile_id]" value="<?php echo $data["profile_id"] ?>">	
+	<input type="hidden" name="REQUIRE_FIEDS[transaction_uuid]" value="<?php echo $data["transaction_uuid"] ?>">
+	<input type="hidden" name="REQUIRE_FIEDS[transaction_type]" value="<?php echo $data["transaction_type"] ?>">
+    <input type="hidden" name="REQUIRE_FIEDS[signed_field_names]" value="<?php echo $data["signed_field_names"] ?>">
+    <input type="hidden" name="REQUIRE_FIEDS[unsigned_field_names]" value="<?php echo $data["unsigned_field_names"] ?>">
+    <input type="hidden" name="REQUIRE_FIEDS[signed_date_time]" value="<?php echo $data["signed_date_time"]; ?>">
+    <input type="hidden" name="REQUIRE_FIEDS[locale]" value="<?php echo $data["locale"]; ?>">	
+	<input type="hidden" name="REQUIRE_FIEDS[reference_number]" value="<?php echo $data["reference_number"]; ?>">		
+	<input type="hidden" name="REQUIRE_FIEDS[merchant_secure_data1]" value="<?php echo $data["merchant_secure_data1"];?>">	
+*/
+?>	
+	<input type="hidden" name="ReturnURL" value="<?php echo $model->returnURL; ?>">
+	<input type="hidden" name="merchant_name" value="<?php echo $model->merchantname;  ?>">
+	<input type="hidden" name="bill_payment" value="false">
+	
+	<?php 
+		foreach($data as $key => $value){
+			echo "<input type=\"hidden\" name=\"REQUIRE_FIEDS[". $key . "]\" value=\"" . $value . "\">" . "\n";
+		}
+	
+	?>
+	
 	<table width ="100%" cellpadding="5" cellspacing="0">
-		<col width="25%/><col width="25%/><col width="25%/><col width="*"/>
+		<col width="25%"/><col width="25%"/><col width="25%"/><col width="*"/>
 		<tr>
 			<td align="right">			
 			First Name *:
 			</td>
-			<td>
-				<input type="text" class="control" id = "bill_to_forename" name="bill_to_forename" value="<?php echo $model->firstname;?>"><br>				
+			<td>								
+					<input type="text" class="control" autocomplete="off"  name = "BILLS[bill_to_forename]" value="<?php echo $model->firstname;?>"><br>								
 			</td>
 			<td align="right">			
 			Amount:
 			</td>
 			<td>
-				<input type="text" class="control" disabled id = "amount" name="amount" value="<?php echo $data["amount"];?>"><br>				
+				<input type="text" class="control" autocomplete="off" readonly="true" name = "BILLS[amount]" value="<?php echo $model->amount;?>"><br>				
 			</td>
 		</tr>		
 		<tr>
@@ -81,13 +80,13 @@ foreach($data as $key => $value)
 			Last Name *:
 			</td>
 			<td>
-				<input type="text" class="control" name="bill_to_surname" value="<?php echo $model->lastname;?>"><br>
+				<input type="text" class="control" autocomplete="off" name="BILLS[bill_to_surname]" value="<?php echo $model->lastname;?>"><br>
 			</td>
 			<td align="right">			
 			Currency:
 			</td>
 			<td>
-				<input type="text" class="control" disabled id = "currency" name="amount" value="<?php echo $data["currency"];?>"><br>				
+				<input type="text" class="control" autocomplete="off" readonly="true" name = "BILLS[currency]" value="<?php echo $model->currency;;?>"><br>				
 			</td>
 		</tr>
 		<tr>
@@ -95,7 +94,7 @@ foreach($data as $key => $value)
 			Address Line 1 *:
 			</td>
 			<td>
-				<input type="text" class="control" name="bill_to_address_line1" value="<?php echo $model->address1;?>"><br>
+				<input type="text" class="control" autocomplete="off" name="BILLS[bill_to_address_line1]" value="<?php echo $model->address1;?>"><br>
 			</td>
 			<td>						
 			</td>
@@ -108,7 +107,7 @@ foreach($data as $key => $value)
 			Address Line 2 *:
 			</td>
 			<td>
-				<input type="text" class="control" name="bill_to_address_line2" value="<?php echo $model->address2;?>"><br>
+				<input type="text" class="control" autocomplete="off" name="BILLS[bill_to_address_line2]" value="<?php echo $model->address2;?>"><br>
 			</td>
 						
 		</tr>
@@ -117,7 +116,7 @@ foreach($data as $key => $value)
 			City *:
 			</td>
 			<td>
-				<input type="text" class="control" name="bill_to_address_city" value="<?php echo $model->city;?>"><br>
+				<input type="text" class="control" autocomplete="off" name="BILLS[bill_to_address_city]" value="<?php echo $model->city;?>"><br>
 			</td>
 		</tr>		
 		<tr>
@@ -125,7 +124,7 @@ foreach($data as $key => $value)
 			Country *:
 			</td>
 			<td>
-				<input type="text" disabled class="control" name="bill_to_address_country" value="<?php echo $model->country;?>"><br>
+				<input type="text"  class="control" autocomplete="off" readonly="true" name="BILLS[bill_to_address_country]" value="<?php echo $model->country;?>"><br>
 			</td>
 		</tr>	
 		<tr>
@@ -133,7 +132,7 @@ foreach($data as $key => $value)
 			Zip Code *:
 			</td>
 			<td>
-				<input type="text" disabled class="control" name="bill_to_address_postal_code" value="<?php echo $model->zipcode;?>"><br>
+				<input type="text" class="control" autocomplete="off" readonly="true" name="BILLS[bill_to_address_postal_code]" value="<?php echo $model->zipcode;?>"><br>
 			</td>
 		</tr>		
 		<tr>
@@ -141,7 +140,7 @@ foreach($data as $key => $value)
 			State:
 			</td>
 			<td>
-				<input type="text" disabled class="control" name="bill_to_address_state" value="<?php echo $model->state;?>"><br>
+				<input type="text" class="control" autocomplete="off" readonly="true" name="BILLS[bill_to_address_state]" value="<?php echo $model->state;?>"><br>
 			</td>
 		</tr>				
 		<tr>
@@ -149,7 +148,7 @@ foreach($data as $key => $value)
 			Email:
 			</td>
 			<td>
-				<input type="text" class="control" name="bill_to_email" value="<?php echo $model->email;?>"><br>
+				<input type="text" class="control" autocomplete="off" name="BILLS[bill_to_email]" value="<?php echo $model->email;?>"><br>
 			</td>
 		</tr>
 		<tr>			
@@ -157,7 +156,7 @@ foreach($data as $key => $value)
 			Company:
 			</td>
 			<td>
-				<input type="text" class="control" name="bill_to_company_name" value="<?php echo $model->company;?>"><br>
+				<input type="text" class="control" autocomplete="off" name="BILLS[bill_to_company_name]" value="<?php echo $model->company;?>"><br>
 			</td>
 		</tr>
 		<tr>
@@ -165,7 +164,7 @@ foreach($data as $key => $value)
 			Phone *:
 			</td>
 			<td>
-				<input type="text" class="control" name="bill_to_phone" value="<?php echo $model->phone;?>"><br>
+				<input type="text" class="control" autocomplete="off" name="BILLS[bill_to_phone]" value="<?php echo $model->phone;?>"><br>
 			</td>
 		</tr>
 							

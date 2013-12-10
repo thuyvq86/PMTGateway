@@ -18,7 +18,26 @@ class BillPaymentController extends Controller
 	}
 	
 	public function actionSend()
-	{			
+	{									
+		if(isset($_POST['REQUIRE_FIEDS']))
+		{				
+			$require_fields_arr = $_POST["REQUIRE_FIEDS"];
+		}		
+		
+		echo $require_fields_arr["unsigned_field_names"];
+		
+		if(isset($_POST['BILLS']))
+		{				
+			$bills_arr = $_POST["BILLS"];
+		}	
+		$paramsfields = array();
+		foreach($require_fields_arr as $key => $value){						
+			$paramsfields[$key] = $value;
+		}			
+		foreach($bills_arr as $key => $value){						
+			$paramsfields[$key] = $value;
+		}
+		
 		if(isset($_POST['ReturnURL']))
 		{				
 			$returnURL = $_POST["ReturnURL"];
@@ -26,59 +45,27 @@ class BillPaymentController extends Controller
 		if(isset($_POST['merchant_name']))
 		{				
 			$merchant_name = $_POST["merchant_name"];
-		}
-		if(isset($_POST['access_key']))
-		{				
-			$access_key = $_POST["access_key"];
-		}
-		
-		if(isset($_POST['profile_id']))
-		{				
-			$profile_id = $_POST["profile_id"];
-		}			
-		if(isset($_POST['transaction_uuid']))
-		{				
-			$transaction_uuid = $_POST["transaction_uuid"];
-		}		
-		if(isset($_POST['signed_date_time']))
-		{				
-			$signed_date_time= $_POST["signed_date_time"];
 		}	
-		$billmodel = new BillForm;
-		$billmodel = $this->getObjectBill();	
-		/*$paramsfields = array();
-		if(isset($_POST['paramfields']) == false)
-		{
-			echo 111;
-		}
-		else
-		{
-			$paramsfields = $_POST['paramfields'];
-			echo $paramsfields['merchant_name'];					
-		}*/
-		//Create paramfields
-		$paramsfields = array(								
-			'access_key' => $access_key,
-			'profile_id' => $profile_id,
-			'transaction_uuid' => $transaction_uuid,			
-			'unsigned_field_names' => '',
-			'signed_date_time' => $signed_date_time,
-			'locale' => 'en',
-			'transaction_type' => 'authorization',
-			'reference_number' => $billmodel->refnumber,
-			'amount' => $billmodel->amount,
-			'currency' => $billmodel->currency,
-			'bill_to_forename' => $billmodel->firstname,
-			'bill_to_surname' => $billmodel->lastname,
-			'bill_to_address_line1' => $billmodel->address1,
-			'bill_to_address_line2' => $billmodel->address2,
-			'bill_to_address_city' => $billmodel->city,
-			'bill_to_address_country' => $billmodel->country,
-			'bill_to_address_postal_code' => $billmodel->zipcode,
-			'bill_to_email' => $billmodel->email,
-			'merchant_secure_data1' => $returnURL,
-			'signed_field_names' => 'access_key,profile_id,transaction_uuid,signed_field_names,unsigned_field_names,signed_date_time,locale,transaction_type,reference_number,amount,currency,bill_to_forename,bill_to_surname,bill_to_address_line1,bill_to_address_line2,bill_to_address_city,bill_to_address_country,bill_to_address_postal_code,bill_to_email,merchant_secure_data1',
-		);				
+		
+		//$url = $this -> createUrl("BillPayment/config");
+		//$this -> redirect($url);
+		//Create Bills Object
+		$billmodel = new BillForm;							
+		$billmodel->firstname = $bills_arr["bill_to_forename"];				
+		$billmodel->lastname = $bills_arr["bill_to_surname"];
+		$billmodel->company = $bills_arr["bill_to_company_name"];
+		$billmodel->address1 = $bills_arr["bill_to_address_line1"];
+		$billmodel->address2 = $bills_arr["bill_to_address_line2"];
+		$billmodel->city = $bills_arr["bill_to_address_city"];
+		$billmodel->country = $bills_arr["bill_to_address_country"];
+		$billmodel->zipcode = $bills_arr["bill_to_address_postal_code"];
+		$billmodel->state = $bills_arr["bill_to_address_state"];
+		$billmodel->email = $bills_arr["bill_to_email"];
+		$billmodel->phone = $bills_arr["bill_to_phone"];
+		$billmodel->amount = $bills_arr["amount"];
+		$billmodel->currency = $bills_arr["currency"];		
+		$billmodel->refnumber = $require_fields_arr["reference_number"];				
+		//========================================
 		$SECRET_KEY = "";
 		if(isset($_SESSION['SECRET_KEY']))
 		{				
@@ -86,119 +73,47 @@ class BillPaymentController extends Controller
 			unset($_SESSION['SECRET_KEY']);			
 		}				
 		
-		$billmodel->signature = $this->sign($paramsfields, $SECRET_KEY);				
+		$billmodel->signature = $this->sign($paramsfields, $SECRET_KEY);					
+		$paramsfields["signature"] = $billmodel->signature;
+											
 		//Save bill
-		$this -> saveBills($billmodel);
-		$requestbody = "<form id=\"frm1\" action=\"https://testsecureacceptance.cybersource.com/pay\" method=\"post\">
-			<input type=\"hidden\" id =\"access_key\" name=\"access_key\" value=\"$access_key\">
-			<input type=\"hidden\" id=\"profile_id\" name=\"profile_id\" value=\"$profile_id\">
-			<input type=\"hidden\" id=\"transaction_uuid\" name=\"transaction_uuid\" value=\"$transaction_uuid\">			
-			<input type=\"hidden\" id=\"transaction_type\" name=\"transaction_type\" value=\"authorization\">
-			<input type=\"hidden\" id=\"signed_field_names\" name=\"signed_field_names\"
-				   value=\"access_key,profile_id,transaction_uuid,signed_field_names,unsigned_field_names,signed_date_time,locale,transaction_type,reference_number,amount,currency,bill_to_forename,bill_to_surname,bill_to_address_line1,bill_to_address_line2,bill_to_address_city,bill_to_address_country,bill_to_address_postal_code,bill_to_email,merchant_secure_data1\">
-		   <input type=\"hidden\" id=\"unsigned_field_names\" name=\"unsigned_field_names\">
-		   <input type=\"hidden\" id=\"signed_date_time\" name=\"signed_date_time\" value=\"$signed_date_time\">
-		   <input type=\"hidden\" id=\"locale\" name=\"locale\" value=\"en\">
-			<input type=\"hidden\" id=\"allow_payment_token_update\" name=\"allow_payment_token_update\" value = \"false\">
-			<input type=\"hidden\" id=\"reference_number\" name=\"reference_number\" value=\"$billmodel->refnumber\">
-			<input type=\"hidden\" id=\"amount\" name=\"amount\" value=\"$billmodel->amount\">
-			<input type=\"hidden\" id=\"currency\" name=\"currency\" value=\"$billmodel->currency\">	
-			<input type=\"hidden\" id=\"signature\" name=\"signature\" value=\"$billmodel->signature\">		
-			<input type=\"hidden\" id=\"bill_payment\" name=\"bill_payment\" value=\"true\">			
-			<input type=\"hidden\" id=\"bill_to_forename\" name=\"bill_to_forename\" value=\"$billmodel->firstname\">
-			<input type=\"hidden\" id=\"bill_to_surname\" name=\"bill_to_surname\" value=\"$billmodel->lastname\">
-			<input type=\"hidden\" id=\"bill_to_address_line1\" name=\"bill_to_address_line1\" value=\"$billmodel->address1\">
-			<input type=\"hidden\" id=\"bill_to_address_line2\" name=\"bill_to_address_line2\" value=\"$billmodel->address2\">
-			<input type=\"hidden\" id=\"bill_to_address_city\" name=\"bill_to_address_city\" value=\"$billmodel->city\">
-			<input type=\"hidden\" id=\"bill_to_address_country\" name=\"bill_to_address_country\" value=\"$billmodel->country\">			
-			<input type=\"hidden\" id=\"bill_to_address_postal_code\" name=\"bill_to_address_postal_code\" value=\"$billmodel->zipcode\">			
-			<input type=\"hidden\" id=\"bill_to_email\" name=\"bill_to_email\" value=\"$billmodel->email\">
-			<input type=\"hidden\" id=\"merchant_secure_data1\" name=\"merchant_secure_data1\" value=\"$returnURL\">
-			</form>									
-			<script>document.getElementById('frm1').submit();</script>						
-			";					
-			echo $requestbody;
-			//<script>document.getElementById('frm1').submit();</script>						
-		//Save request log
-		$this->saveLogRequest($billmodel, $merchant_name,$requestbody);				
-		$GLOBALS['GMonitorBill'] = $billmodel;
-	}
-	public function getObjectBill(){
-		$billmodel = new BillForm;
-		if(isset($_POST['reference_number']))
-		{				
-			$billmodel->refnumber= $_POST["reference_number"];
-		}			
-		if(isset($_POST['signature']))
-		{				
-			$billmodel->signature= $_POST["signature"];
-		}	
+		//$this -> saveBills($billmodel);
 		
-		if(isset($_POST['amount']) && $_POST['amount'] != "")
-		{				
-			$billmodel->amount = $_POST["amount"];
-		}else{
-			$url = $this -> createUrl("BillPayment/config");
-			$this -> redirect($url);
-		}		
-		if(isset($_POST['currency']) && $_POST['amount'] != "")
-		{				
-			$billmodel->currency= $_POST["currency"];
-		}else{
-			$url = $this -> createUrl("BillPayment/config");
-			$this -> redirect($url);
+		
+		$requestbody = "<form id=\"frm1\" action=\"https://testsecureacceptance.cybersource.com/pay\" method=\"post\">" . "\n";		
+		foreach($paramsfields as $key => $value)	{
+			//echo $key  . "-" . $value . "<br>";
+			$requestbody .= "<input type=\"hidden\" id=\"". $key . "\" name=\"". $key . "\" value=\"" . $value . "\">" . "\n";
 		}			
-		if(isset($_POST['bill_to_forename']))
-		{				
-			$billmodel->firstname = $_POST["bill_to_forename"];
-		}
-		if(isset($_POST['bill_to_surname']))
-		{				
-			$billmodel->lastname = $_POST["bill_to_surname"];
-		}
-		if(isset($_POST['bill_to_company_name']))
-		{				
-			$billmodel->company = $_POST["bill_to_company_name"];
-		}
-		if(isset($_POST['bill_to_phone']))
-		{				
-			$billmodel->phone = $_POST["bill_to_phone"];
-		}
-		if(isset($_POST['bill_to_email']))
-		{				
-			$billmodel->email = $_POST["bill_to_email"];
-		}
-		if(isset($_POST['bill_to_address_line1']))
-		{				
-			$billmodel->address1 = $_POST["bill_to_address_line1"];
-		}
-		if(isset($_POST['bill_to_address_line2']))
-		{				
-			$billmodel->address2 = $_POST["bill_to_address_line2"];
-		}
-		if(isset($_POST['bill_to_address_country']))
-		{				
-			$billmodel->country = $_POST["bill_to_address_country"];
-		}
-		if(isset($_POST['bill_to_address_city']))
-		{				
-			$billmodel->city = $_POST["bill_to_address_city"];
-		}		
-		if(isset($_POST['bill_to_address_postal_code']))
-		{				
-			$billmodel->zipcode = $_POST["bill_to_address_postal_code"];
-		}	
-		if(isset($_POST['bill_to_address_state']))
-		{				
-			$billmodel->state = $_POST["bill_to_address_state"];
-		}					
-		return $billmodel;
+		
+		$requestbody .= "</form>";
+		echo $requestbody;
+		//echo $requestbody . "<script>document.getElementById('frm1').submit();</script>";
+								
+		//Save request log
+		//$this->saveLogRequest($billmodel, $merchant_name,$requestbody);				
+		
 	}
+			
+	public function actionError()
+	{			
+		$error	= "";
+		if(isset($_GET['ErrMsg'])){
+			$error = $_GET['ErrMsg'];
+		}
+		
+		$this->render('error',array('errorMsg'=>$error));
+	}
+		
+
 	public function actionBillPayment()
 	{					
 		if($_SERVER['REQUEST_METHOD'] == "GET")
 		{
-			echo "REQUEST INVALID. METHOD REQUEST: " . $_SERVER['REQUEST_METHOD'] ."<br>";						
+			$err = "REQUEST INVALID. METHOD REQUEST: " . $_SERVER['REQUEST_METHOD'];			
+			$url = $this -> createUrl("BillPayment/error", array('ErrMsg'=>$err));			
+			$this -> redirect($url);
+			return;
 		}
 		
 		$provider_code = "";		
@@ -207,8 +122,11 @@ class BillPaymentController extends Controller
 			$provider_code = $_POST['provider_code'];
 		}
 		if($provider_code == "")
-		{						
-			echo "Can not find your provider_code <br>";
+		{									
+			$err = "Can not find the provider_code";	
+			$url = $this -> createUrl("BillPayment/error", array('ErrMsg'=>$err));			
+			$this -> redirect($url);
+			return;
 		}
 		
 		$billmodel=new BillForm;		
@@ -227,23 +145,25 @@ class BillPaymentController extends Controller
 		$merFields = array();						
 		
 		if($reader -> rowCount == 0)
-		{
-			echo "Can not find your Merchant  <br>";										
+		{			
+			$err = "Can not find your Merchant";	
+			$url = $this -> createUrl("BillPayment/error", array('ErrMsg'=>$err));			
+			$this -> redirect($url);
+			return;
 		}
 		else
 		{
 			foreach($reader as $row) 		
 			{ 				
 				$merName = $row["ProviderName"];
-				$merFields[$row["DisplayName"]] = $row["Value"] ;
-					$url = $row["Value"];
+				$merFields[$row["DisplayName"]] = $row["Value"] ;				
 			}		
 								
 		//=============================			
 		if(isset($_POST['hdReturnURL']))
 		{				
-			$returnURL = $_POST["hdReturnURL"];
-		}			
+			$billmodel->returnURL = $_POST["hdReturnURL"];			
+		}		
 		if(isset($_POST['bill_to_forename']))
 		{				
 			$billmodel->firstname = $_POST["bill_to_forename"];
@@ -299,44 +219,83 @@ class BillPaymentController extends Controller
 			$billmodel->currency = $_POST["currency"];
 		}
 		
-		$billmodel->refnumber = (new DateTime()) -> getTimestamp();					
-		$billmodel->integrationfields = $merFields;	
-		$paramsfields = array(		
-			'ReturnURL' => $returnURL,
-			'MerchantName' => $merName,
-			//'URL' => $url,
-			//'access_key' => $merFields["access_key"],
-			//'profile_id' => $merFields["profile_id"],
-			'transaction_uuid' => uniqid(),			
-			'unsigned_field_names' => '',
-			'signed_date_time' => gmdate("Y-m-d\TH:i:s\Z"),
-			'locale' => 'en',
-			'transaction_type' => 'authorization',
-			'reference_number' => $billmodel->refnumber,
-			'amount' => $billmodel->amount,
-			'currency' => $billmodel->currency,
-			'bill_to_forename' => $billmodel->firstname,
-			'bill_to_surname' => $billmodel->lastname,
-			'bill_to_address_line1' => $billmodel->address1,
-			'bill_to_address_line2' => $billmodel->address2,
-			'bill_to_address_city' => $billmodel->city,
-			'bill_to_address_country' => $billmodel->country,
-			'bill_to_address_postal_code' => $billmodel->zipcode,
-			'bill_to_email' => $billmodel->email,
-			'signed_field_names' => 'access_key,profile_id,transaction_uuid,signed_field_names,unsigned_field_names,signed_date_time,locale,transaction_type,reference_number,amount,currency,bill_to_forename,bill_to_surname,bill_to_address_line1,bill_to_address_line2,bill_to_address_city,bill_to_address_country,bill_to_address_postal_code,bill_to_email',			
-		);	
+		$billmodel->merchantname = $merName;
 		
-		foreach($merFields as $key => $value){			
-			if($key != "SECRET_KEY")
-				$paramsfields[$key] = $value;
+		$billmodel->refnumber = (new DateTime()) -> getTimestamp();									
+			
+		$paramsfields = array();				
+		//add require fields
+		foreach($merFields as $key => $value){
+			if($key != "SECRET_KEY" && $key != "signature"){
+				if($key == "transaction_uuid") 
+				{
+					if($value == ""){ $value = uniqid();} 
+				}
+				else if ($key == "unsigned_field_names") {
+					if($value == ""){ $value = "";} 
+				}
+				else if ($key == "signed_date_time") {
+					if($value == ""){ $value = gmdate("Y-m-d\TH:i:s\Z");} 
+				}
+				else if ($key == "reference_number") {
+					if($value == ""){ $value = $billmodel->refnumber;} 
+				}				
+				else if ($key == "merchant_secure_data1") {
+					if($value == ""){ $value = $billmodel->returnURL;} 
+				}	
+			
+				$paramsfields[$key] = $value;			
+			}else
+			{	
+				if($key == "SECRET_KEY")
+				{
+					$_SESSION['SECRET_KEY'] = $merFields["SECRET_KEY"];																			
+				}
+			}
+		}		
+		$paramsfields["amount"] = $billmodel->amount;		
+		$paramsfields["currency"] = $billmodel->currency;
+						
+		//Create signed_field_names from require fields
+		$strSignFieldName = "";
+		foreach($paramsfields as $key => $value){
+			$strSignFieldName .= $key .",";
 		}
+				
+		$strSignFieldName .= "bill_to_forename,";
+		$strSignFieldName .= "bill_to_surname,";
+		$strSignFieldName .= "bill_to_address_line1,";
+		$strSignFieldName .= "bill_to_address_line2,";
+		$strSignFieldName .= "bill_to_address_city,";
+		$strSignFieldName .= "bill_to_address_country,";
+		$strSignFieldName .= "bill_to_address_postal_code,";
+		$strSignFieldName .= "bill_to_address_state,";
+		$strSignFieldName .= "bill_to_email,";
+		$strSignFieldName .= "bill_to_company_name,";
+		$strSignFieldName .= "bill_to_phone";
 		
-		//session_start();
-		$_SESSION['SECRET_KEY'] = $merFields["SECRET_KEY"];				
-		$billmodel->signature = $this->sign($paramsfields, $merFields["SECRET_KEY"]);				
+		/*$paramsfields["bill_to_forename"] = $billmodel->firstname;
+		$paramsfields["bill_to_surname"] = $billmodel->lastname;
+		$paramsfields["bill_to_address_line1"] = $billmodel->address1;
+		$paramsfields["bill_to_address_line2"] = $billmodel->address2;
+		$paramsfields["bill_to_address_city"] = $billmodel->city;
+		$paramsfields["bill_to_address_country"] = $billmodel->country;
+		$paramsfields["bill_to_address_postal_code"] = $billmodel->zipcode;
+		$paramsfields["bill_to_address_state"] = $billmodel->state;
+		$paramsfields["bill_to_email"] = $billmodel->email;
+		$paramsfields["bill_to_company_name"] = $billmodel->company;
+		$paramsfields["bill_to_phone"] = $billmodel->phone;*/				
+		//$strSignFieldName = substr($strSignFieldName, 0, strlen($strSignFieldName) -1);
+		
+		$paramsfields["signed_field_names"] = $strSignFieldName;
+		
+		
+		//$signature = $this->sign($paramsfields, $merFields["SECRET_KEY"]);		
+		//$billmodel->signature = $signature;
 		$this->render('BillPayment',array('model'=>$billmodel, 'data' => $paramsfields));			
-		}
+		
 	}
+}
 	
 	private function saveBills($billModel)
 	{		
@@ -352,8 +311,8 @@ class BillPaymentController extends Controller
 		// Insert new		
 		$today = date("Y-m-d H:i:s");
 		$sql = "INSERT INTO cp_epaybillinfo
-				(FirstName, LastName, AddressLine1, AddressLine2, City, Country, ZipCode, State, Company, Email, Phone, TrxnDate)
-				values (:FirstName, :LastName, :AddressLine1, :AddressLine2, :City, :Country, :ZipCode, :State, :Company, :Email, :Phone, :TrxnDate)";
+				(FirstName, LastName, AddressLine1, AddressLine2, City, Country, ZipCode, State, Company, Email, Phone, TrxnDate, Amount, Currency, ReferenceNumber)
+				values (:FirstName, :LastName, :AddressLine1, :AddressLine2, :City, :Country, :ZipCode, :State, :Company, :Email, :Phone, :TrxnDate, :Amount, :Currency, :ReferenceNumber)";
 		
 		$command = $connection -> createCommand($sql);
 		$command -> bindParam(":FirstName", $billModel->firstname, PDO::PARAM_STR);		
@@ -368,6 +327,9 @@ class BillPaymentController extends Controller
 		$command -> bindParam(":Email", $billModel->email, PDO::PARAM_STR);
 		$command -> bindParam(":Phone", $billModel->phone, PDO::PARAM_STR);
 		$command -> bindParam(":TrxnDate", $today, PDO::PARAM_STR);
+		$command -> bindParam(":Amount", $billModel->amount, PDO::PARAM_STR);
+		$command -> bindParam(":Currency", $billModel->currency, PDO::PARAM_STR);		
+		$command -> bindParam(":ReferenceNumber", $billModel->refnumber, PDO::PARAM_STR);		
 		$command -> execute();
 		$connection -> active = false;		
 	}
@@ -414,5 +376,5 @@ class BillPaymentController extends Controller
 	function commaSeparate ($dataToSign) {		
 		return implode(",",$dataToSign);
 	}
-		
+	
 }
