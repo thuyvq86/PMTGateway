@@ -24,4 +24,5 @@ class BillForm extends CFormModel
 	public $signature;
 	public $returnURL;
 	public $merchantname;	
+	public $invoiceid;
 }

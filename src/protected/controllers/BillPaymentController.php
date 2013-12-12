@@ -164,6 +164,10 @@ class BillPaymentController extends Controller
 		{				
 			$billmodel->returnURL = $_POST["x_relay_response"];			
 		}		
+		if(isset($_POST['x_invoice_num']))
+		{				
+			$billmodel->invoiceid = $_POST["x_invoice_num"];			
+		}			
 		if(isset($_POST['bill_to_forename']))
 		{				
 			$billmodel->firstname = $_POST["bill_to_forename"];
@@ -246,6 +250,8 @@ class BillPaymentController extends Controller
 				}				
 				else if ($key == "merchant_secure_data1") {
 					if($value == "NONE"){ $value = $billmodel->returnURL;} 
+				}else if ($key == "merchant_secure_data2") {
+					if($value == "NONE"){ $value = $billmodel->invoiceid;} 
 				}	
 			
 				$paramsfields[$key] = $value;			
