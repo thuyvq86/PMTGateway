@@ -31,7 +31,7 @@ class MerchantController extends Controller
 		$model->fromDate = $fromDate->format("Y,m,d");
 		$model->toDate = $toDate->format("Y,m,d");
 		
-		$sqlStatement = 'select * from cp_requestlog where trxndatetime between :fromDate and :toDate';
+		$sqlStatement = 'select a.MerchantName, a.ReferenceNumber, a.RespCode, a.TrxnDateTime, b.Amount, b.Currency from cp_requestlog a inner join cp_epaybillinfo b on a.ReferenceNumber = b.ReferenceNumber where a.TrxnDateTime between :fromDate and :toDate';
 		$connection = Yii::app() -> db;
 		$connection -> active = true;
 		$command = $connection -> createCommand($sqlStatement);
@@ -43,7 +43,7 @@ class MerchantController extends Controller
 		$model->aaData = '[';
 		foreach($reader as $row) 
 		{
-			$model->aaData .= '{"col1": "' . $row["MerchantName"] . '","col2": "' . $row["ReferenceNumber"] . '","col5": "' . $row["RespCode"] . '","col6": "' . date_format(date_create($row["TrxnDateTime"]), 'd-m-Y H:i:s') . '"},';
+			$model->aaData .= '{"col1": "' . $row["MerchantName"] . '","col2": "' . $row["ReferenceNumber"] . '","col3": "' . $row["Amount"] . '","col4": "' . $row["Currency"] . '","col5": "' . $row["RespCode"] . '","col6": "' . date_format(date_create($row["TrxnDateTime"]), 'd-m-Y H:i:s') . '"},';
 		}
 		if (strlen($model->aaData) > 1) $model->aaData = substr($model->aaData, 0, strlen($model->aaData) - 1);
 		$model->aaData .= ']';
@@ -51,6 +51,8 @@ class MerchantController extends Controller
 		$model->aoColumns = '[
 					{ "sTitle": "Merchant Name", "mData": "col1" },
 					{ "sTitle": "Reference Number", "mData": "col2" },
+					{ "sTitle": "Amount", "mData": "col3" },
+					{ "sTitle": "Currency", "mData": "col4" },
 					{ "sTitle": "Response Code", "mData": "col5" },
 					{ "sTitle": "Transaction Date", "mData": "col6" }
 				]';
