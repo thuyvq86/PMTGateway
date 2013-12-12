@@ -83,10 +83,10 @@ foreach($data as $key => $value)
 				<input type="text" class="control" autocomplete="off" name="BILLS[bill_to_surname]" value="<?php echo $model->lastname;?>"><br>
 			</td>
 			<td align="right">			
-			Currency:
+			
 			</td>
 			<td>
-				<input type="text" class="control" autocomplete="off" readonly="true" name = "BILLS[currency]" value="<?php echo $model->currency;;?>"><br>				
+				<input type="text" class="control" autocomplete="off" readonly="true" style="display:none" name = "BILLS[currency]" value="<?php echo $model->currency;;?>"><br>				
 			</td>
 		</tr>
 		<tr>

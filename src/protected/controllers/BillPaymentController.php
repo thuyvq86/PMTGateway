@@ -160,9 +160,9 @@ class BillPaymentController extends Controller
 			}		
 								
 		//=============================			
-		if(isset($_POST['hdReturnURL']))
+		if(isset($_POST['x_relay_response']))
 		{				
-			$billmodel->returnURL = $_POST["hdReturnURL"];			
+			$billmodel->returnURL = $_POST["x_relay_response"];			
 		}		
 		if(isset($_POST['bill_to_forename']))
 		{				
@@ -218,10 +218,14 @@ class BillPaymentController extends Controller
 		{				
 			$billmodel->currency = $_POST["currency"];
 		}
+		if(isset($_POST['x_fp_sequence']))
+		{				
+			$billmodel->refnumber = $_POST["x_fp_sequence"];
+		}
 		
 		$billmodel->merchantname = $merName;
 		
-		$billmodel->refnumber = (new DateTime()) -> getTimestamp();									
+		//$billmodel->refnumber = (new DateTime()) -> getTimestamp();									
 			
 		$paramsfields = array();				
 		//add require fields
@@ -229,7 +233,7 @@ class BillPaymentController extends Controller
 			if($key != "SECRET_KEY" && $key != "signature"){
 				if($key == "transaction_uuid") 
 				{
-					if($value == ""){ $value = uniqid();} 
+					if($value == "NONE"){ $value = uniqid();} 
 				}
 				else if ($key == "unsigned_field_names") {
 					if($value == "NONE"){ $value = "";} 
