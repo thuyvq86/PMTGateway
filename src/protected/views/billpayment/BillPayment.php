@@ -62,17 +62,23 @@ foreach($data as $key => $value)
 	<table width ="100%" cellpadding="5" cellspacing="0">
 		<col width="25%"/><col width="25%"/><col width="25%"/><col width="*"/>
 		<tr>
+			<td align="center"></td>
+			<td align="left"><h1>Billing Information</h1></td>		
+			<td colspan = "0" align="center"></td>
+			<td align="left"><h1>Your Order</h1></td>
+		</tr>
+		<tr>
 			<td align="right">			
 			First Name *:
 			</td>
 			<td>								
-					<input type="text" class="control" autocomplete="off"  name = "BILLS[bill_to_forename]" value="<?php echo $model->firstname;?>"><br>								
+					<input type="text" class="control" tabindex ="1" autocomplete="off"  name = "BILLS[bill_to_forename]" value="<?php echo $model->firstname;?>"><br>								
 			</td>
 			<td align="right">			
 			Amount:
 			</td>
 			<td>
-				<input type="text" class="control" autocomplete="off" readonly="true" name = "BILLS[amount]" value="<?php echo $model->amount;?>"><br>				
+				<input type="text" class="control" tabindex ="13" autocomplete="off" readonly="true" name = "BILLS[amount]" value="<?php echo $model->amount;?>"><br>				
 			</td>
 		</tr>		
 		<tr>
@@ -80,13 +86,13 @@ foreach($data as $key => $value)
 			Last Name *:
 			</td>
 			<td>
-				<input type="text" class="control" autocomplete="off" name="BILLS[bill_to_surname]" value="<?php echo $model->lastname;?>"><br>
+				<input type="text" class="control" tabindex ="2" autocomplete="off" name="BILLS[bill_to_surname]" value="<?php echo $model->lastname;?>"><br>
 			</td>
 			<td align="right">			
 			
 			</td>
 			<td>
-				<input type="text" class="control" autocomplete="off" readonly="true" style="display:none" name = "BILLS[currency]" value="<?php echo $model->currency;;?>"><br>				
+				<input type="submit" tabindex ="14" value = "Submit" class="buttonClass">
 			</td>
 		</tr>
 		<tr>
@@ -94,12 +100,12 @@ foreach($data as $key => $value)
 			Address Line 1 *:
 			</td>
 			<td>
-				<input type="text" class="control" autocomplete="off" name="BILLS[bill_to_address_line1]" value="<?php echo $model->address1;?>"><br>
+				<input type="text" class="control" tabindex ="3" autocomplete="off" name="BILLS[bill_to_address_line1]" value="<?php echo $model->address1;?>"><br>
 			</td>
 			<td>						
 			</td>
-			<td>
-				<input type="submit" value = "Submit" class="buttonClass">
+			<td>				
+				<input type="text" class="control" autocomplete="off" readonly="true" style="display:none" name = "BILLS[currency]" value="<?php echo $model->currency;;?>"><br>				
 			</td>
 		</tr>
 		<tr>
@@ -107,7 +113,7 @@ foreach($data as $key => $value)
 			Address Line 2 *:
 			</td>
 			<td>
-				<input type="text" class="control" autocomplete="off" name="BILLS[bill_to_address_line2]" value="<?php echo $model->address2;?>"><br>
+				<input type="text" class="control" tabindex ="4" autocomplete="off" name="BILLS[bill_to_address_line2]" value="<?php echo $model->address2;?>"><br>
 			</td>
 						
 		</tr>
@@ -116,7 +122,7 @@ foreach($data as $key => $value)
 			City *:
 			</td>
 			<td>
-				<input type="text" class="control" autocomplete="off" name="BILLS[bill_to_address_city]" value="<?php echo $model->city;?>"><br>
+				<input type="text" class="control" tabindex ="5" autocomplete="off" name="BILLS[bill_to_address_city]" value="<?php echo $model->city;?>"><br>
 			</td>
 		</tr>		
 		<tr>
@@ -124,7 +130,7 @@ foreach($data as $key => $value)
 			Country *:
 			</td>
 			<td>
-				<input type="text"  class="control" autocomplete="off" readonly="true" name="BILLS[bill_to_address_country]" value="<?php echo $model->country;?>"><br>
+				<input type="text"  class="control" tabindex ="6" autocomplete="off" readonly="true" name="BILLS[bill_to_address_country]" value="<?php echo $model->country;?>"><br>
 			</td>
 		</tr>	
 		<tr>
@@ -132,7 +138,7 @@ foreach($data as $key => $value)
 			Zip Code *:
 			</td>
 			<td>
-				<input type="text" class="control" autocomplete="off" readonly="true" name="BILLS[bill_to_address_postal_code]" value="<?php echo $model->zipcode;?>"><br>
+				<input type="text" class="control" tabindex ="7" autocomplete="off" readonly="true" name="BILLS[bill_to_address_postal_code]" value="<?php echo $model->zipcode;?>"><br>
 			</td>
 		</tr>		
 		<tr>
@@ -140,7 +146,7 @@ foreach($data as $key => $value)
 			State:
 			</td>
 			<td>
-				<input type="text" class="control" autocomplete="off" readonly="true" name="BILLS[bill_to_address_state]" value="<?php echo $model->state;?>"><br>
+				<input type="text" class="control" tabindex ="8" autocomplete="off" readonly="true" name="BILLS[bill_to_address_state]" value="<?php echo $model->state;?>"><br>
 			</td>
 		</tr>				
 		<tr>
@@ -148,7 +154,7 @@ foreach($data as $key => $value)
 			Email:
 			</td>
 			<td>
-				<input type="text" class="control" autocomplete="off" name="BILLS[bill_to_email]" value="<?php echo $model->email;?>"><br>
+				<input type="text" class="control" tabindex ="9" autocomplete="off" name="BILLS[bill_to_email]" value="<?php echo $model->email;?>"><br>
 			</td>
 		</tr>
 		<tr>			
@@ -156,7 +162,7 @@ foreach($data as $key => $value)
 			Company:
 			</td>
 			<td>
-				<input type="text" class="control" autocomplete="off" name="BILLS[bill_to_company_name]" value="<?php echo $model->company;?>"><br>
+				<input type="text" class="control" tabindex ="10" autocomplete="off" name="BILLS[bill_to_company_name]" value="<?php echo $model->company;?>"><br>
 			</td>
 		</tr>
 		<tr>
@@ -164,7 +170,7 @@ foreach($data as $key => $value)
 			Phone *:
 			</td>
 			<td>
-				<input type="text" class="control" autocomplete="off" name="BILLS[bill_to_phone]" value="<?php echo $model->phone;?>"><br>
+				<input type="text" class="control" tabindex ="12" autocomplete="off" name="BILLS[bill_to_phone]" value="<?php echo $model->phone;?>"><br>
 			</td>
 		</tr>
 							
